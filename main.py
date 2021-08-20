@@ -41,12 +41,12 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
     def button_clear(self):
         self.label.clear()
         self.label.setText("0")
-        self.flag = True        # Сброс результата, на экране 0 программа отработала
+        self.flag = True                            # Сброс результата, на экране 0 программа отработала
 
 
     def result(self):
         operation = self.label.text()
-        c = 0     # Из - за отсутствия этого начального значения пременной с был вылет по нажатию равно и пустом вводе
+        c = 0                                       # Из - за отсутствия этого начального значения пременной с был вылет по нажатию равно и пустом вводе
         n = len(operation)
         operators = ['*', '/', '+', '-', '%']
         try:
@@ -71,16 +71,16 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
                     res = a / b
                 elif znak == '%':
                     res = b / 100 * a
-                if res % 1 == 0:
+                if res % 1 == 0:                     # преобразование 5,0 в 5 при выводе(целое число без ноля)
                     res = int(res)
                 self.label.setText(str(res))
-                self.flag = True                    # программа отработала корректно, результат на экран, флаг меняется на True
+                self.flag = True                     # программа отработала корректно, результат на экран, флаг меняется на True
             except ValueError:
                 self.label.setText('Erorr')
-                self.flag = True                     # Исключение, программа отработала с ошибкой по вводу (не коректный ввод не смогла посчитать) меняется на True
+                self.flag = True                     # Исключение, программа отработала с ошибкой по вводу (не коректный ввод не смогла посчитать), флаг меняется на True
         except ZeroDivisionError:
             self.label.setText('Erorr div by zero')
-            self.flag = True                         # Исключение, программа отработала с ошибкой по делению на ноль меняется на True
+            self.flag = True                         # Исключение, программа отработала с ошибкой по делению на ноль, флаг меняется на True
 
 def main():
     app = QtWidgets.QApplication(sys.argv) # новый экземпляр класса Qtapplication
