@@ -5,7 +5,7 @@ import os # Библиотека для работы с файлами
 
 class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTableWidget):
     def __init__(self):
-        #Это нужно для доступа к переменным в файле calc.py
+        #Это нужно для доступа к переменным в файле calc_design.py
         super().__init__()
         self.flag = True   # Значение флага в начале работы
         self.setupUi(self)  # Инициализация дизайна
