@@ -7,7 +7,7 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
     def __init__(self):
         #Это нужно для доступа к переменным в файле calc.py
         super().__init__()
-        self.flag = True
+        self.flag = True   # Значение флага в начале работы
         self.setupUi(self)  # Инициализация дизайна
         self.pushButton_14.clicked.connect(lambda: self.write_number(self.pushButton_14.text()))  # 0
         self.pushButton.clicked.connect(lambda: self.write_number(self.pushButton.text()))        # 1
@@ -31,22 +31,22 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
 
     def write_number(self, number):
         # Условие, которое убирает начальное знечение ноль на экране калькулятора
-        if self.label.text() == "0" and self.flag:
+        if self.label.text() == "0" and self.flag:  # flag отвечает за отработку программы. True - отработала, посчитала или ошибка
             self.label.setText(number)
-            self.flag = False
+            self.flag = False                       # Переключение флага, значение принято, здесь срабатывает если в окне начальный ноль
         else:
             self.label.setText(self.label.text() + number)
-            self.flag = False
+            self.flag = False                       # Переключение флага, значение принято если в окне уже есть что-то
 
     def button_clear(self):
         self.label.clear()
         self.label.setText("0")
-        self.flag = True
+        self.flag = True        # Сброс результата, на экране 0 программа отработала
 
 
     def result(self):
         operation = self.label.text()
-        c = 0
+        c = 0     # Из - за отсутствия этого начального значения пременной с был вылет по нажатию равно и пустом вводе
         n = len(operation)
         operators = ['*', '/', '+', '-', '%']
         try:
@@ -77,10 +77,10 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
                 self.flag = True
             except ValueError:
                 self.label.setText('Erorr')
-                self.flag = True
+                self.flag = True                     # Программа отработала с ошибкой по вводу (не коректный ввод не смогла посчитать)
         except ZeroDivisionError:
             self.label.setText('Erorr div by zero')
-            self.flag = True
+            self.flag = True                         # Программа отработала с ошибкой по делению на ноль
 
 def main():
     app = QtWidgets.QApplication(sys.argv) # новый экземпляр класса Qtapplication
