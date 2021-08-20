@@ -44,32 +44,37 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
 
     def result(self):
         operation = self.label.text()
+        c = 0
         n = len(operation)
         operators = ['*', '/', '+', '-', '%']
         try:
-            for element in operators:
-                coper_index = operation.find(element, 0, n)
-                if coper_index != -1:
-                    c = coper_index
-                    znak = element
+            try:
+                for element in operators:
+                    coper_index = operation.find(element, 0, n)
+                    if coper_index != -1:
+                        c = coper_index
+                        znak = element
 
-            a = float(operation[0:c])
-            b = float(operation[c + 1:n])
+                a = float(operation[0:c])
+                b = float(operation[c + 1:n])
+                res = 0
 
-            if znak == '+':
-                res = a + b
-            elif znak == '-':
-                res = a - b
-            elif znak == '*':
-                res = a * b
-            elif znak == '/':
-                res = a / b
-            elif znak == '%':
-                res = b / 100 * a
-            self.label.setText(str(res))
-            self.flag = True
-        except ValueError:
-            self.label.setText('Erorr')
+                if znak == '+':
+                    res = a + b
+                elif znak == '-':
+                    res = a - b
+                elif znak == '*':
+                    res = a * b
+                elif znak == '/':
+                    res = a / b
+                elif znak == '%':
+                    res = b / 100 * a
+                self.label.setText(str(res))
+                self.flag = True
+            except ValueError:
+                self.label.setText('Erorr')
+        except ZeroDivisionError:
+            self.label.setText('Erorr div by zero')
 
 def main():
     app = QtWidgets.QApplication(sys.argv) # новый экземпляр класса Qtapplication
