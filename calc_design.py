@@ -293,7 +293,7 @@ class Ui_MainWindow(object):
         self.pushButton_12.setText(_translate("MainWindow", "8"))
         self.pushButton_13.setText(_translate("MainWindow", "9"))
         self.pushButton_14.setText(_translate("MainWindow", "0"))
-        self.pushButton_15.setText(_translate("MainWindow", ","))
+        self.pushButton_15.setText(_translate("MainWindow", "."))
         self.pushButton_16.setText(_translate("MainWindow", "%"))
         self.pushButton_17.setText(_translate("MainWindow", "СБРОС"))
         self.pushButton_18.setText(_translate("MainWindow", "="))

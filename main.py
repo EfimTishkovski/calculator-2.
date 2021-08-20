@@ -7,7 +7,7 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
     def __init__(self):
         #Это нужно для доступа к переменным в файле calc.py
         super().__init__()
-        self.flag = False
+        self.flag = True
         self.setupUi(self)  # Инициализация дизайна
         self.pushButton_14.clicked.connect(lambda: self.write_number(self.pushButton_14.text()))  # 0
         self.pushButton.clicked.connect(lambda: self.write_number(self.pushButton.text()))        # 1
@@ -31,15 +31,17 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
 
     def write_number(self, number):
         # Условие, которое убирает начальное знечение ноль на экране калькулятора
-        if self.label.text() == "0" or self.flag:
+        if self.label.text() == "0" and self.flag:
             self.label.setText(number)
             self.flag = False
         else:
             self.label.setText(self.label.text() + number)
+            self.flag = False
 
     def button_clear(self):
         self.label.clear()
         self.label.setText("0")
+        self.flag = True
 
 
     def result(self):
@@ -69,12 +71,16 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
                     res = a / b
                 elif znak == '%':
                     res = b / 100 * a
+                if res % 1 == 0:
+                    res = int(res)
                 self.label.setText(str(res))
                 self.flag = True
             except ValueError:
                 self.label.setText('Erorr')
+                self.flag = True
         except ZeroDivisionError:
             self.label.setText('Erorr div by zero')
+            self.flag = True
 
 def main():
     app = QtWidgets.QApplication(sys.argv) # новый экземпляр класса Qtapplication
