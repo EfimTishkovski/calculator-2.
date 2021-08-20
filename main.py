@@ -74,13 +74,13 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
                 if res % 1 == 0:
                     res = int(res)
                 self.label.setText(str(res))
-                self.flag = True
+                self.flag = True                    # программа отработала корректно, результат на экран, флаг меняется на True
             except ValueError:
                 self.label.setText('Erorr')
-                self.flag = True                     # Программа отработала с ошибкой по вводу (не коректный ввод не смогла посчитать)
+                self.flag = True                     # Исключение, программа отработала с ошибкой по вводу (не коректный ввод не смогла посчитать) меняется на True
         except ZeroDivisionError:
             self.label.setText('Erorr div by zero')
-            self.flag = True                         # Программа отработала с ошибкой по делению на ноль
+            self.flag = True                         # Исключение, программа отработала с ошибкой по делению на ноль меняется на True
 
 def main():
     app = QtWidgets.QApplication(sys.argv) # новый экземпляр класса Qtapplication

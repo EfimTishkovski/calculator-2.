@@ -1,4 +1,5 @@
 # Разработка логики калькулятора
+"""
 operation = input()
 n = len(operation)
 operators = ['*', '/', '+', '-', '%']
@@ -26,3 +27,8 @@ try:
     print(res)
 except ValueError:
     print('Erorr')
+
+"""
+
+n = input()
+print(eval(n))
