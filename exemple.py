@@ -17,9 +17,12 @@ for i in range(len(operation)):
         mass_element.append(operation[i])               # Добавление символа в массив
         number = ''                                     # "Обнуление" переменной для формирования числа
 else:
-    mass_element.append(float(number))
+    if number.isdigit():                                # Добавление последнего элемента, с этим были проблемы
+        mass_element.append(float(number))              # Если число, то float и в массив
+    elif number in operators and number != '':          # Если оператор, то соответствие с масс операторов и не пустой
+        mass_element.append(number)
 # После цикла имеем массив отдельных элементов
-print(mass_element)
+#print(mass_element)
 # Функция элементарных мат. вычислений
 def elementary_operations(a,b,operator):
     if operator == '+':
@@ -59,10 +62,65 @@ def found_and_run(input_mass, operator):
             flag = False           # Остановка цикла после отработки for
     return mass
 
+# Функция поиска и вычислений в скобках
+# Проверка строки не производится!
+# Строка должна быть проверена ещё на входе!
+def run_hooks(input_mass):
+    mass = input_mass
+    mass_in_hooks = []                              # массив для выражения в скобках
+    flag = True
+    a = -1                                          # Начальное значение, если неизменно, то скобок не найдено
+    b = -1                                          # Начальное значение, если неизменно, то скобок не найдено
+    while flag:
+        # Поиск
+        for i in range(len(mass)):
+            if mass[i] == '(':
+                a = i                                # Индекс начала выражения в скобках
+                for j in range(i, len(mass) + 1):    # поиск индекса второй скобки
+                    if mass[j] == ')':
+                        b = j
+                        flag = False
+                        break
+                    if mass[j] == '(':               # Если найдена новая открытая скобка, ей присваевается новый индекс
+                        a = j
+        if a < 0:                                    # Если не найдено открытой скобки
+            return input_mass
 
+    for k in range(a + 1, b):
+        mass_in_hooks.append(input_mass[k])
+    #print(mass_in_hooks)
+    # Поиск окночен в mass_in_hooks выражение в скобках
+    # Вычисления
+    for element in priority_operators_1:
+        result = found_and_run(mass_in_hooks,element)     # Вычисления по операторам с приоритетом 1
+    if len(result) <= 1:                                  # Проверка на завершение вычислений, если число одно, то стоп
+        return result
+
+    for element in priority_operators_3:
+        result = found_and_run(result, element)           # Вычисления по операторам с приоритетом 3
+    if len(result) <= 1:
+        return result
+
+    for element in priority_operators_4:
+        result = found_and_run(result, element)           # Вычисления по операторам с приоритетом 4
+    if len(result) <= 1:
+        return result
+
+print(mass_element)
+print(run_hooks(mass_element))
+
+
+
+
+
+
+
+
+"""
 for element in priority_operators_1:
     a = found_and_run(mass_element, element)
 print(a)
+"""
 
 
 
