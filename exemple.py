@@ -28,9 +28,9 @@ def found_and_run(input_mass, operator):
     while flag:
         # Поиск
         for i in range(1, len(mass)):
-            print(mass[i], i)
+            #print(mass[i], i)
             if mass[i] in operator:                                               # Если совпало, высичиляем
-                print(mass[i])
+                #print(mass[i])
                 mass[i] = elementary_operations(mass[i - 1],mass[i + 1], mass[i]) # Меняем оператор на результат
                 del mass[i + 1]                                                   # Удаляем исходные цифры из массива
                 del mass[i - 1]                                                   # Удаляем исходные цифры из массива
@@ -108,18 +108,18 @@ def matematika(operation):
         elif number in operators and number != '':  # Если оператор, то соответствие с масс операторов и не пустой
             mass_element.append(number)
     # После цикла имеем массив отдельных элементов
-    print(mass_element)
+    #print(mass_element)
     # Основной блок вычислений
     # mass_element   массив до вычислений
     # mass_after_run массив после вычислений
     mass_after_run = []
     while True:
         mass_after_run.extend(found_and_run(mass_element, priority_operators_1))    # Поиск операторов с приоритетом 1
-        print(found_and_run(mass_element, priority_operators_1))
+        #print(found_and_run(mass_element, priority_operators_1))
         if len(mass_after_run) == len(mass_element):                                # Проверка на наличие операторов
-            #print(mass_element)
             mass_element.clear()                                   # Очистка входного списка
             mass_element.extend(mass_after_run)                    # Запись туда массива после вычислений
+            return mass_element
             break                                                  # Остановка цикла если оператров больше нет
         else:
             mass_element.clear()
