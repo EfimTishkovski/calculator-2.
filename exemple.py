@@ -58,15 +58,15 @@ def run_hooks(input_mass):
                 for j in range(i, len(mass) + 1):    # поиск индекса второй скобки
                     if mass[j] == ')':
                         b = j
-                        #flag = False
+                        #flag = False      # Если задействовать этот флаг, будет вычислять по одной скобке
                         break
                     if mass[j] == '(':               # Если найдена новая открытая скобка, ей присваевается новый индекс
                         a = j
         if a < 0:                                    # Если не найдено открытой скобки
             return mass                         # Возврат массива, если скобок не было, то вернётся исходный
-
+        #print(a, b)
         for k in range(a + 1, b):
-            mass_in_hooks.append(input_mass[k])
+            mass_in_hooks.append(mass[k])
         #print(mass_in_hooks)
         # Поиск окночен в mass_in_hooks выражение в скобках
         # Вычисления, всегда 2 числа (x  y)
@@ -98,15 +98,15 @@ def run_hooks(input_mass):
             mass_in_hooks.extend(result)
             result.clear()
 
-        mass[a] = mass_in_hooks[0]              # Замена первой скобки на результат
-        #print(a, b)
+        mass[a] = mass_in_hooks[0]          # Замена первой скобки на результат
+        #print(mass_in_hooks)
         for i in range(b, a, -1):
-            del mass[i]                                      # Удаление из массива выражения в скобках
-        #print(mass)
+            del mass[i]                     # Удаление из массива выражения в скобках
         a = -1      # Сброс переменных
         b = -1
-        mass_in_hooks.clear()
-    return mass                                           # Возврат преобразованного массива
+        mass_in_hooks.clear()              # Очистка выражения в скобках (это критично!)
+        #print(mass)
+    #return mass                            # Возврат преобразованного массива
 
 # Основная функция для вычислений
 # На входе строка типа: 1+23-8*(1+3)
@@ -145,16 +145,30 @@ def matematika(operation):
     mass_element.extend(mass_after_run)     # Перезапись входного списка
     mass_after_run.clear()                  # Очистка буферного списка
     if len(mass_element) == 1:              # Проверка на окончание работы
-        mass_after_run.clear()              # Очистка буферного списка
-        return mass_element[0]              # Если там одно число, его и выводим
+        return mass_element              # Если там одно число, его и выводим
+
+    amount_hooks = mass_element.count()     # Поиск скобок в массиве, если есть amount_hooks > 0
+    if amount_hooks > 0:
+        mass_after_run.extend(run_hooks(mass_element))
+    mass_element.clear()
+    mass_element.extend(mass_after_run)
+    mass_after_run.clear()
+    if len(mass_element) == 1:
+        return mass_element
 
     mass_after_run.extend(found_and_run(mass_element, priority_operators_3))  # Поиск ВСЕХ операторов с приоритетом 3
     mass_element.clear()
     mass_element.extend(mass_after_run)
     mass_after_run.clear()
     if len(mass_element) == 1:
-        mass_after_run.clear()
-        return mass_element[0]
+        return mass_element
+
+    mass_after_run.extend(found_and_run(mass_element, priority_operators_4))  # Поиск ВСЕХ операторов с приоритетом 4
+    mass_element.clear()
+    mass_element.extend(mass_after_run)
+    mass_after_run.clear()
+    if len(mass_element) == 1:
+        return mass_element
 
     return mass_element
     
