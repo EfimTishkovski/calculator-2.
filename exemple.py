@@ -135,26 +135,26 @@ def matematika(operation):
     # После цикла имеем массив отдельных элементов
     print(mass_element)
 
-
     # Основной блок вычислений
     # mass_element   массив до вычислений
     # mass_after_run массив после вычислений
     mass_after_run = []  # Буферный список
+
+    amount_hooks = mass_element.count('(')  # Поиск скобок в массиве, если есть amount_hooks > 0
+    if amount_hooks > 0:
+        mass_after_run.extend(run_hooks(mass_element))
+        mass_element.clear()
+        mass_element.extend(mass_after_run)
+        mass_after_run.clear()
+    if len(mass_element) == 1:
+        return mass_element
+
     mass_after_run.extend(found_and_run(mass_element, priority_operators_1))    # Поиск ВСЕХ операторов с приоритетом 1
     mass_element.clear()                    # Очистка входного списка
     mass_element.extend(mass_after_run)     # Перезапись входного списка
     mass_after_run.clear()                  # Очистка буферного списка
     if len(mass_element) == 1:              # Проверка на окончание работы
-        return mass_element              # Если там одно число, его и выводим
-
-    amount_hooks = mass_element.count()     # Поиск скобок в массиве, если есть amount_hooks > 0
-    if amount_hooks > 0:
-        mass_after_run.extend(run_hooks(mass_element))
-    mass_element.clear()
-    mass_element.extend(mass_after_run)
-    mass_after_run.clear()
-    if len(mass_element) == 1:
-        return mass_element
+        return mass_element                 # Если там одно число, его и выводим
 
     mass_after_run.extend(found_and_run(mass_element, priority_operators_3))  # Поиск ВСЕХ операторов с приоритетом 3
     mass_element.clear()
@@ -171,7 +171,3 @@ def matematika(operation):
         return mass_element
 
     return mass_element
-    
-
-
-
