@@ -1,6 +1,7 @@
 import sys # sys нужен для передачи argv в QApplication
 from PyQt5 import QtWidgets
 import calc_design # Подключение файла дизайна
+from exemple import *    # Подключение файла с тоннами кода для работы этого механизма =)
 import os # Библиотека для работы с файлами
 
 class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTableWidget):
@@ -8,6 +9,7 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
         #Это нужно для доступа к переменным в файле calc_design.py
         super().__init__()
         self.flag = True   # Значение флага в начале работы
+        #self.enter = '0'   # Переменная для хранения ввода
         self.setupUi(self)  # Инициализация дизайна
         self.pushButton_14.clicked.connect(lambda: self.write_number(self.pushButton_14.text()))  # 0
         self.pushButton.clicked.connect(lambda: self.write_number(self.pushButton.text()))        # 1
@@ -30,6 +32,8 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
 
 
     def write_number(self, number):
+
+        """
         # Условие, которое убирает начальное знечение ноль на экране калькулятора
         if self.label.text() == "0" and self.flag:  # flag отвечает за отработку программы. True - отработала, посчитала или ошибка
             self.label.setText(number)
@@ -37,6 +41,13 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
         else:
             self.label.setText(self.label.text() + number)
             self.flag = False                       # Переключение флага, значение принято если в окне уже есть что-то
+        """
+        # В целом работает
+        enter = self.label.text()
+        enter_ap = enter_control(enter, number)   # enter after processing
+        print(enter_ap[0])
+        #enter = enter_ap[0]
+        self.label.setText(enter_ap[0])
 
     def button_clear(self):
         self.label.clear()

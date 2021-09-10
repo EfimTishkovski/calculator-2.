@@ -19,7 +19,7 @@ def hooks_control(s_enter):
 
 # Крнтроль ввода собственной персоной =)
 def enter_control(s_befor, s_enter):
-    acsess_element = '1234567890+-/*^%()'  # массив допустимых элементов
+    acsess_element = '1234567890+-/*^%().'  # массив допустимых элементов
     enter = s_befor  # Начальное значение переменной для проверки
 
     # n = input()
@@ -43,16 +43,15 @@ def enter_control(s_befor, s_enter):
         # print(enter)
         # Вторая проверка
         if flag:
-            if enter[
-               -1:].isdigit() and element in '(+-/*^%':  # Если последний элемент уже принятой строки - цифра а за ней мат оператор,
+            if enter[-1:].isdigit() and element in '(+-/*^%.':  # Если последний элемент уже принятой строки - цифра а за ней мат оператор,
                 enter += element  # Тогда добавляем символ
                 flag = False  # Остановка обработки ввода, символ принят
                 print('accepted2')
             else:
                 print('denial2')
 
-            if enter[
-               -1:] in '+-/*^%' and element.isdigit() and flag:  # Если последний элемент уже принятой строки - мат. оператор
+            if enter[-1:] in '+-/*^%.' and element.isdigit() and flag:  # Если последний элемент уже принятой строки - мат. оператор,
+                # + принятие дробно гочисла 0.0
                 enter += element  # Защита от двойтого ввода типа // ** ++
                 flag = False
                 print('accepted3')
@@ -66,6 +65,10 @@ def enter_control(s_befor, s_enter):
                 enter += element
                 print('accepted5')
                 flag = False
+            elif enter[-1:].isdigit and element == '.' and flag: # Проверка на принятие точки дробного числа 0.
+                enter += element
+                flag = False
+                print('accepted .')
             else:
                 print('denial3')
             # Проверки при вводе скобок
@@ -82,10 +85,15 @@ def enter_control(s_befor, s_enter):
                 print('accepted8')
                 flag = False
     # Проверка строки на выходе
+    # Тут я перемудрил, доработать с учётом оконного приложения
+    # (как вариант: передавть значение flag_out сразу в return минуя проверки)
+    """
     if flag == False:
+
         if enter[-1:] in '+-/*^%':
             flag = True
             print('denial out')
+    """
 
     # Проверка корректности введения скобок
     flag_hooks = True  # Флаг для ответа проверки на скобки по умолчанию проверка пройдена
@@ -102,10 +110,11 @@ def enter_control(s_befor, s_enter):
     # Ответ проверки
     if flag == False and flag_hooks:
         print(enter)
-        return enter, True  # Стока/символы приняты
+        return enter, True   # Стока/символы приняты
+        # формат возврата: выходная строка, флаг отработки, флаг обработки целой строки на выходе
     else:
-        # print(s_befor, enter)
-        return s_befor, enter, False, out_messege  # Сторока/символы не приняты возвращает строку, которую получила на входе
+        print(s_befor, enter, out_messege)
+        return s_befor, False  # Сторока/символы не приняты возвращает строку, которую получила на входе
 
 
 # Функция элементарных мат. вычислений
