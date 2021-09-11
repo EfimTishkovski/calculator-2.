@@ -22,7 +22,6 @@ def enter_control(s_befor, s_enter):
     acsess_element = '1234567890+-/*^%().'  # массив допустимых элементов
     enter = s_befor  # Начальное значение переменной для проверки
 
-    # n = input()
     # Первая проверка на входе только цифры и мат операторы, не пропустить левый символ!
     # Проверка всех символов строки s_enter
     for element in s_enter:
@@ -43,7 +42,27 @@ def enter_control(s_befor, s_enter):
         # print(enter)
         # Вторая проверка
         if flag:
-            if enter[-1:].isdigit() and element in '(+-/*^%.':  # Если последний элемент уже принятой строки - цифра а за ней мат оператор,
+            if element == '.':      # Корректный ввод дробных чисел, защита от 0.1.2.0
+                if enter.rfind('.') != -1:
+                    index = enter.rfind('.')  # Поиск индекса предыдущей точки
+                    s_betwin_points = enter[index + 1:]
+                    if s_betwin_points[-1:].isdigit():  # Продолжение проверки если предыдущая точка найдена
+                        for symbol in s_betwin_points:
+                            if symbol in '+-/*%^':
+                                enter += element        # Проверка прошла успешно, добавляем точку
+                                print('accepted .')
+                            else:
+                                flag = False            # Проверка не пройдена
+                                print('denial .')
+                    else:
+                        flag = False            # если последний символ меджу точками не число, то проверка не пройдена
+                        print('denial +.')
+                else:
+                    flag = False
+                    enter += element         # Если предыдущей точки не найдено
+                    print('accepted add first .')
+
+            if enter[-1:].isdigit() and element in '(+-/*^%':  # Если последний элемент уже принятой строки - цифра а за ней мат оператор,
                 enter += element  # Тогда добавляем символ
                 flag = False  # Остановка обработки ввода, символ принят
                 print('accepted2')
@@ -65,12 +84,10 @@ def enter_control(s_befor, s_enter):
                 enter += element
                 print('accepted5')
                 flag = False
-            elif enter[-1:].isdigit and element == '.' and flag: # Проверка на принятие точки дробного числа 0.
-                enter += element
-                flag = False
-                print('accepted .')
+
             else:
                 print('denial3')
+
             # Проверки при вводе скобок
             if element == '(' and enter[-1:] in '+-/*^%' and flag:  # Ввод скобок  +(  -(  *(  /(  ^(  %(
                 enter += element
@@ -87,13 +104,12 @@ def enter_control(s_befor, s_enter):
     # Проверка строки на выходе
     # Тут я перемудрил, доработать с учётом оконного приложения
     # (как вариант: передавть значение flag_out сразу в return минуя проверки)
-    """
+    flag_last_symbol = True
     if flag == False:
-
-        if enter[-1:] in '+-/*^%':
-            flag = True
+        if enter[-1:] in '+-/*^%':    # Если выражение заканчается одним из: +-/*^%,
+            flag_last_symbol = False  # то оно показывается в окне, но не обрабатывается дальше
             print('denial out')
-    """
+
 
     # Проверка корректности введения скобок
     flag_hooks = True  # Флаг для ответа проверки на скобки по умолчанию проверка пройдена
@@ -109,12 +125,12 @@ def enter_control(s_befor, s_enter):
 
     # Ответ проверки
     if flag == False and flag_hooks:
-        print(enter)
-        return enter, True   # Стока/символы приняты
+        print(enter, flag_last_symbol)
+        return enter, True, flag_last_symbol   # Стока/символы приняты
         # формат возврата: выходная строка, флаг отработки, флаг обработки целой строки на выходе
     else:
-        print(s_befor, enter, out_messege)
-        return s_befor, False  # Сторока/символы не приняты возвращает строку, которую получила на входе
+        print(s_befor, enter, out_messege, flag_last_symbol)
+        return s_befor, False, flag_last_symbol  # Сторока/символы не приняты возвращает строку, которую получила на входе
 
 
 # Функция элементарных мат. вычислений
