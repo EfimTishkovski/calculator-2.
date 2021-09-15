@@ -122,6 +122,10 @@ def enter_control(s_befor, s_enter):
         flag_hooks = False
         out_messege = 'Лишняя ('
 
+    # Поиск деления на ноль
+    flag_div_by_zero = True         # Поумолчанию проверка пройдена
+
+
     # Обработка проверок
     # на выход передаётся флаг и сообщение об ошибке если она есть
     out_flag = False
@@ -140,18 +144,20 @@ def enter_control(s_befor, s_enter):
 
 # Функция элементарных мат. вычислений
 def elementary_operations(a,b,operator):
-    if operator == '+':
-        return a + b
-    elif operator == '-':
-        return a - b
-    elif operator == '*':
-        return a * b
-    elif operator == '/':
-        return a / b
-    elif operator == '^':
-        return a ** b
-    elif operator == '%':
-        return (b / 100) * a
+    try:
+        if operator == '+':
+            return a + b
+        elif operator == '-':
+            return a - b
+        elif operator == '*':
+            return a * b
+        elif operator == '/':
+            return a / b
+        elif operator == '^':
+            return a ** b
+        elif operator == '%':
+            return (b / 100) * a
+    except: ZeroDivisionError    # Если сработает, то функция выдаст None
 
 priority_operators_1 = ['^','%']  # Операторы с приорететом 1
 priority_operators_2 = ['(',')']  # Операторы с приорететом 2
@@ -162,14 +168,15 @@ priority_operators_4 = ['+','-']  # Операторы с приорететом
 def found_and_run(input_mass, operator):
     mass = []                                # Создание буферного массива
     mass.extend(input_mass)                  # Создание копии входного массива
+                         # Переменная для выдачи ошибок
     flag = True
     while flag:
         # Поиск
         for i in range(1, len(mass)):
             #print(mass[i], i)
-            if mass[i] in operator:                                               # Если совпало, высичиляем
+            if mass[i] in operator:                                               # Если совпало, высичисляем
                 #print(mass[i])
-                mass[i] = elementary_operations(mass[i - 1], mass[i + 1], mass[i]) # Меняем оператор на результат
+                mass[i] = elementary_operations(mass[i - 1], mass[i + 1], mass[i])  # Меняем оператор на результат
                 del mass[i + 1]                                                   # Удаляем исходные цифры из массива
                 del mass[i - 1]                                                   # Удаляем исходные цифры из массива
                 break
@@ -184,6 +191,8 @@ def run_hooks(input_mass):
     mass = []                                  # Создание буферного массива
     mass.extend(input_mass)                    # Создание копии входного массива
     mass_in_hooks = []                         # массив для выражения в скобках
+    error_messege = ''                         # Переменная для вывода сообщения об ошибке
+    ress = []                                  # Буфферный массив для отлова деления на ноль
     flag = True
     a = -1                                     # Начальное значение, если неизменно, то скобок не найдено
     b = -1                                     # Начальное значение, если неизменно, то скобок не найдено
@@ -195,12 +204,12 @@ def run_hooks(input_mass):
                 for j in range(i, len(mass) + 1):    # поиск индекса второй скобки
                     if mass[j] == ')':
                         b = j
-                        #flag = False      # Если задействовать этот флаг, будет вычислять по одной скобке
+                        #flag = False           # Если задействовать этот флаг, будет вычислять по одной скобке
                         break
                     if mass[j] == '(':          # Если найдена новая открытая скобка, ей присваевается новый индекс
                         a = j
         if a < 0:                               # Если не найдено открытой скобки
-            return mass                         # Возврат массива, если скобок не было, то вернётся исходный
+            return mass                         # Возврат массива он же ответ функции, если скобок не было, то вернётся исходный
         #print(a, b)
         for k in range(a + 1, b):
             mass_in_hooks.append(mass[k])
@@ -210,14 +219,17 @@ def run_hooks(input_mass):
         result = []
         result.extend(found_and_run(mass_in_hooks,priority_operators_1)) # Вычисления по операторам с приоритетом 1
         #print(result)
-        if len(result) == len(mass_in_hooks):
-            result.clear()
+        if len(result) == len(mass_in_hooks):            # Если длины массивов равны, то вычислений не происходит
+            result.clear()                               # Очищаем result, передача массива для дольнейшей обработки
         else:
             mass_in_hooks.clear()
             mass_in_hooks.extend(result)
             result.clear()
-
-        result.extend(found_and_run(mass_in_hooks, priority_operators_3))  # Вычисления по операторам с приоритетом 3
+        #ress = (found_and_run(mass_in_hooks, priority_operators_3)
+        result.extend(found_and_run(mass_in_hooks, priority_operators_3))   # Вычисления по операторам с приоритетом 3
+        if result[0] is None:
+            out = list(map(str,mass))
+            return #''.join(out)
         #print(result)
         if len(result) == len(mass_in_hooks):
             result.clear()
@@ -275,6 +287,9 @@ def matematika(operation):
     mass_after_run = []  # Буферный список
     amount_hooks = mass_element.count('(')  # Поиск скобок в массиве, если есть amount_hooks > 0
     if amount_hooks > 0:
+        if run_hooks(mass_element) is None:   # Отлов ошибки по делению на ноль
+            out = list(map(str, mass_element))
+            return ''.join(out)
         mass_after_run.extend(run_hooks(mass_element))
         mass_element.clear()
         mass_element.extend(mass_after_run)
@@ -286,6 +301,9 @@ def matematika(operation):
             return round(mass_element[0], num_celi)
 
     mass_after_run.extend(found_and_run(mass_element, priority_operators_1))    # Поиск ВСЕХ операторов с приоритетом 1
+    if mass_after_run[0] is None:             # Отлов ошибки по делению на ноль
+        out = list(map(str, mass_element))
+        return''.join(out)
     mass_element.clear()                    # Очистка входного списка
     mass_element.extend(mass_after_run)     # Перезапись входного списка
     mass_after_run.clear()                  # Очистка буферного списка
@@ -296,6 +314,9 @@ def matematika(operation):
             return round(mass_element[0], num_celi)
 
     mass_after_run.extend(found_and_run(mass_element, priority_operators_3))  # Поиск ВСЕХ операторов с приоритетом 3
+    if mass_after_run[0] is None:             # Отлов ошибки по делению на ноль
+        out = list(map(str, mass_element))
+        return''.join(out)
     mass_element.clear()
     mass_element.extend(mass_after_run)
     mass_after_run.clear()
