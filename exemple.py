@@ -102,8 +102,7 @@ def enter_control(s_befor, s_enter):
                 print('accepted8')
                 flag = False
     # Проверка строки на выходе
-    # Тут я перемудрил, доработать с учётом оконного приложения
-    # (как вариант: передавть значение flag_out сразу в return минуя проверки)
+    # как вариант: передавть значение flag_out сразу в return минуя проверки
     flag_last_symbol = True
     if flag == False:
         if enter[-1:] in '+-/*^%':    # Если выражение заканчается одним из: +-/*^%,
@@ -123,14 +122,20 @@ def enter_control(s_befor, s_enter):
         flag_hooks = False
         out_messege = 'Лишняя ('
 
+    # Обработка проверок
+    # на выход передаётся флаг и сообщение об ошибке если она есть
+    out_flag = False
+    if flag_hooks and flag_last_symbol:
+        out_flag = True
+
     # Ответ проверки
-    if flag == False and flag_hooks:
-        print(enter, flag_last_symbol)
-        return enter, True, flag_last_symbol   # Стока/символы приняты
+    if flag == False:
+        print(enter, flag_last_symbol, 568)
+        return enter, True, out_flag   # Стока/символы приняты
         # формат возврата: выходная строка, флаг отработки, флаг обработки целой строки на выходе
     else:
-        print(s_befor, enter, out_messege, flag_last_symbol)
-        return s_befor, False, flag_last_symbol  # Сторока/символы не приняты возвращает строку, которую получила на входе
+        print(s_befor, enter, out_messege, flag_last_symbol, 899)
+        return s_befor, False, out_flag  # Сторока/символы не приняты возвращает строку, которую получила на входе
 
 
 # Функция элементарных мат. вычислений

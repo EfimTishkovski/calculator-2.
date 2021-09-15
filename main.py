@@ -1,10 +1,10 @@
 import sys # sys нужен для передачи argv в QApplication
 from PyQt5 import QtWidgets
-import calc_design # Подключение файла дизайна
+import calc_des # Подключение файла дизайна
 from exemple import *    # Подключение файла с тоннами кода для работы этого механизма =)
 import os # Библиотека для работы с файлами
 
-class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTableWidget):
+class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableWidget):
     def __init__(self):
         #Это нужно для доступа к переменным в файле calc_design.py
         super().__init__()
@@ -29,6 +29,9 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
         self.pushButton_15.clicked.connect(lambda: self.write_number(self.pushButton_15.text()))  # .
         self.pushButton_17.clicked.connect(self.button_clear)                                     # СБРОС
         self.pushButton_18.clicked.connect(self.result)                                           # =
+        self.pushButton_19.clicked.connect(lambda: self.write_number(self.pushButton_19.text()))  # (
+        self.pushButton_20.clicked.connect(lambda: self.write_number(self.pushButton_20.text()))  # )
+        #self.pushButton_20.clicked.connect(self.delete)                                           # delete удаление последнего символа
 
 
     def write_number(self, number):
@@ -46,8 +49,8 @@ class Main_run (QtWidgets.QMainWindow, calc_design.Ui_MainWindow, QtWidgets.QTab
         enter = self.label.text()
         enter_ap = enter_control(enter, number)   # enter after processing
         print(enter_ap[0])
-        #enter = enter_ap[0]
         self.label.setText(enter_ap[0])
+        # решить вопрос деления на 0
 
     def button_clear(self):
         self.label.clear()
