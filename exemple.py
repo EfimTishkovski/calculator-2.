@@ -157,7 +157,8 @@ def elementary_operations(a,b,operator):
             return a ** b
         elif operator == '%':
             return (b / 100) * a
-    except: ZeroDivisionError    # Если сработает, то функция выдаст None
+    except ZeroDivisionError:                    # Если сработает, то функция выдаст None
+            return
 
 priority_operators_1 = ['^','%']  # Операторы с приорететом 1
 priority_operators_2 = ['(',')']  # Операторы с приорететом 2
@@ -168,7 +169,6 @@ priority_operators_4 = ['+','-']  # Операторы с приорететом
 def found_and_run(input_mass, operator):
     mass = []                                # Создание буферного массива
     mass.extend(input_mass)                  # Создание копии входного массива
-                         # Переменная для выдачи ошибок
     flag = True
     while flag:
         # Поиск
@@ -191,8 +191,6 @@ def run_hooks(input_mass):
     mass = []                                  # Создание буферного массива
     mass.extend(input_mass)                    # Создание копии входного массива
     mass_in_hooks = []                         # массив для выражения в скобках
-    error_messege = ''                         # Переменная для вывода сообщения об ошибке
-    ress = []                                  # Буфферный массив для отлова деления на ноль
     flag = True
     a = -1                                     # Начальное значение, если неизменно, то скобок не найдено
     b = -1                                     # Начальное значение, если неизменно, то скобок не найдено
@@ -225,11 +223,9 @@ def run_hooks(input_mass):
             mass_in_hooks.clear()
             mass_in_hooks.extend(result)
             result.clear()
-        #ress = (found_and_run(mass_in_hooks, priority_operators_3)
         result.extend(found_and_run(mass_in_hooks, priority_operators_3))   # Вычисления по операторам с приоритетом 3
         if result[0] is None:
-            out = list(map(str,mass))
-            return #''.join(out)
+            return
         #print(result)
         if len(result) == len(mass_in_hooks):
             result.clear()
@@ -262,6 +258,7 @@ def matematika(operation):
     # Разбивка исходной строки по числам и выделение символов операций
     num_celi = 5       # Величина округления на выходе
     mass_element = []  # Массив разделённых элементов
+    error_messege = '' # Переменная для сообщения об ошибке
     operators = ['*', '/', '+', '-', '%', '(', ')', '^']
     number = ''  # Переменная для формирования числа
     for i in range(len(operation)):
@@ -289,7 +286,8 @@ def matematika(operation):
     if amount_hooks > 0:
         if run_hooks(mass_element) is None:   # Отлов ошибки по делению на ноль
             out = list(map(str, mass_element))
-            return ''.join(out)
+            error_messege += 'Деление на ноль'
+            return ''.join(out), error_messege
         mass_after_run.extend(run_hooks(mass_element))
         mass_element.clear()
         mass_element.extend(mass_after_run)
@@ -303,7 +301,8 @@ def matematika(operation):
     mass_after_run.extend(found_and_run(mass_element, priority_operators_1))    # Поиск ВСЕХ операторов с приоритетом 1
     if mass_after_run[0] is None:             # Отлов ошибки по делению на ноль
         out = list(map(str, mass_element))
-        return''.join(out)
+        error_messege += 'Деление на ноль'
+        return''.join(out), error_messege
     mass_element.clear()                    # Очистка входного списка
     mass_element.extend(mass_after_run)     # Перезапись входного списка
     mass_after_run.clear()                  # Очистка буферного списка
@@ -316,7 +315,8 @@ def matematika(operation):
     mass_after_run.extend(found_and_run(mass_element, priority_operators_3))  # Поиск ВСЕХ операторов с приоритетом 3
     if mass_after_run[0] is None:             # Отлов ошибки по делению на ноль
         out = list(map(str, mass_element))
-        return''.join(out)
+        error_messege += 'Деление на ноль'
+        return''.join(out), error_messege
     mass_element.clear()
     mass_element.extend(mass_after_run)
     mass_after_run.clear()
@@ -335,3 +335,4 @@ def matematika(operation):
             return int(mass_element[0])
         else:
             return round(mass_element[0],num_celi)
+
