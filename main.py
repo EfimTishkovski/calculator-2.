@@ -7,13 +7,13 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
     def __init__(self):
         #Это нужно для доступа к переменным в файле calc_design.py
         super().__init__()
-        self.flag = True   # Значение флага в начале работы
+        self.flag = True                     # Значение флага в начале работы
         self.flag_out_enter_controll = True  # Запуск вычислений true - строка обработана, можно вычислять false - строка не корректна
-        self.flag_second = True             # Вторичный флаг enter_control строка выводится на экран, но не вычисляется
+        self.flag_second = True              # Вторичный флаг enter_control строка выводится на экран, но не вычисляется
         self.messege = ''                    # Переменная для вывода сообщения об ошибке
-        self.enter = ''     # Переменная для хранения ввода
-        self.enter_ap = []  # Переменная для передачи обработанной строки после enter_control
-        self.setupUi(self)  # Инициализация дизайна
+        self.enter = ''                      # Переменная для хранения ввода
+        self.enter_ap = []                   # Переменная для передачи обработанной строки после enter_control
+        self.setupUi(self)                   # Инициализация дизайна
         self.pushButton_14.clicked.connect(lambda: self.write_number(self.pushButton_14.text()))  # 0
         self.pushButton.clicked.connect(lambda: self.write_number(self.pushButton.text()))        # 1
         self.pushButton_4.clicked.connect(lambda: self.write_number(self.pushButton_4.text()))    # 2
@@ -35,21 +35,12 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
         self.pushButton_19.clicked.connect(lambda: self.write_number(self.pushButton_19.text()))  # (
         self.pushButton_20.clicked.connect(lambda: self.write_number(self.pushButton_20.text()))  # )
         self.pushButton_21.clicked.connect(self.delete_last)                                      # DEL, удаление последнего символа
+        self.pushButton_22.clicked.connect(lambda: self.write_number(self.pushButton_22.text()))  # ^
 
 
     def write_number(self, number):
 
-        """
-        # Условие, которое убирает начальное знечение ноль на экране калькулятора
-        if self.label.text() == "0" and self.flag:  # flag отвечает за отработку программы. True - отработала, посчитала или ошибка
-            self.label.setText(number)
-            self.flag = False                       # Переключение флага, значение принято, здесь срабатывает если в окне начальный ноль
-        else:
-            #self.label.setText(self.label.text() + number)
-            #self.flag = False                       # Переключение флага, значение принято если в окне уже есть что-то
-        """
-        # Подключить математику
-        # Условие, которое убирает начальное знечение ноль на экране калькулятора, копия дабы не сломать сие творение
+        # Условие, которое убирает начальное знечение ноль на экране калькулятора.
         if self.label.text() == '0' and self.flag:  # flag отвечает за отработку программы. True - отработала, посчитала или ошибка
             self.label.clear()
             self.flag = False  # Переключение флага, значение принято, здесь срабатывает если в окне начальный ноль
