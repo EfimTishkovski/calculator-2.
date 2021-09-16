@@ -18,7 +18,7 @@ def hooks_control(s_enter):
     return count_hooks
 
 # Крнтроль ввода собственной персоной =)
-def enter_control(s_befor, s_enter):
+def enter_control(s_befor, s_enter):        # s_befor - стока до ввода s_enter - строка на входе, или один символ
     acsess_element = '1234567890+-/*^%().'  # массив допустимых элементов
     enter = s_befor  # Начальное значение переменной для проверки
 
@@ -62,7 +62,11 @@ def enter_control(s_befor, s_enter):
                     enter += element         # Если предыдущей точки не найдено
                     print('accepted add first .')
 
-            if enter[-1:].isdigit() and element in '(+-/*^%':  # Если последний элемент уже принятой строки - цифра а за ней мат оператор,
+            if enter[-2:-1] == '/' and enter[-1:] == '0' and element in '+-*/':  # Обработка введения деления на ноль
+                print('denail div by zero')                                      # Если условие верно, то элемент не принимается
+                flag = False
+
+            if enter[-1:].isdigit() and element in '(+-/*^%' and flag:  # Если последний элемент уже принятой строки - цифра а за ней мат оператор,
                 enter += element  # Тогда добавляем символ
                 flag = False  # Остановка обработки ввода, символ принят
                 print('accepted2')
@@ -101,6 +105,8 @@ def enter_control(s_befor, s_enter):
                 enter += element
                 print('accepted8')
                 flag = False
+
+
     # Проверка строки на выходе
     # как вариант: передавть значение flag_out сразу в return минуя проверки
     flag_last_symbol = True
@@ -123,11 +129,12 @@ def enter_control(s_befor, s_enter):
         out_messege = 'Лишняя ('
 
     # Поиск деления на ноль
-    flag_div_by_zero = True         # Поумолчанию проверка пройдена
-
+    flag_div_by_zero = False         # Поумолчанию проверка пройдена
+    if s_befor[-2:-1] == 0 and s_befor[:-1] == '/' and s_enter in '+-*':
+        flag_div_by_zero = True
 
     # Обработка проверок
-    # на выход передаётся флаг и сообщение об ошибке если она есть
+    # на выход передаётся флаг
     out_flag = False
     if flag_hooks and flag_last_symbol:
         out_flag = True
