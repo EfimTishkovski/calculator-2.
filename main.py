@@ -9,7 +9,7 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
         #Это нужно для доступа к переменным в файле calc_design.py
         super().__init__()
         self.flag = True   # Значение флага в начале работы
-        #self.enter = '0'   # Переменная для хранения ввода
+        self.enter = ''   # Переменная для хранения ввода
         self.setupUi(self)  # Инициализация дизайна
         self.pushButton_14.clicked.connect(lambda: self.write_number(self.pushButton_14.text()))  # 0
         self.pushButton.clicked.connect(lambda: self.write_number(self.pushButton.text()))        # 1
@@ -42,15 +42,26 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
             self.label.setText(number)
             self.flag = False                       # Переключение флага, значение принято, здесь срабатывает если в окне начальный ноль
         else:
-            self.label.setText(self.label.text() + number)
-            self.flag = False                       # Переключение флага, значение принято если в окне уже есть что-то
+            #self.label.setText(self.label.text() + number)
+            #self.flag = False                       # Переключение флага, значение принято если в окне уже есть что-то
         """
-        # В целом работает
-        enter = self.label.text()
-        enter_ap = enter_control(enter, number)   # enter after processing
-        print(enter_ap[0])
-        self.label.setText(enter_ap[0])
-        # решить вопрос деления на 0
+        # Условие, которое убирает начальное знечение ноль на экране калькулятора, копия дабы не сломать сие творение
+        if self.label.text() == '0' and self.flag:  # flag отвечает за отработку программы. True - отработала, посчитала или ошибка
+            self.label.clear()
+            self.flag = False  # Переключение флага, значение принято, здесь срабатывает если в окне начальный ноль
+
+        if self.label.text() == '0' and number == '.' and self.flag:
+            self.enter = self.label.text()
+            self.label.clear()
+            self.flag = False
+        else:
+            #В целом работает
+            self.enter = self.label.text()
+            enter_ap = enter_control(self.enter, number)   # enter after processing
+            print(enter_ap[0])
+            self.label.clear()
+            self.label.setText(enter_ap[0])
+
 
     def button_clear(self):
         self.label.clear()
