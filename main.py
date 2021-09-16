@@ -1,8 +1,7 @@
-import sys # sys нужен для передачи argv в QApplication
+import sys                    # sys нужен для передачи argv в QApplication
 from PyQt5 import QtWidgets
-import calc_des # Подключение файла дизайна
-from exemple import *    # Подключение файла с тоннами кода для работы этого механизма =)
-import os # Библиотека для работы с файлами
+import calc_des               # Подключение файла дизайна
+from exemple import *         # Подключение файла с тоннами кода для работы этого механизма =)
 
 class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableWidget):
     def __init__(self):
@@ -31,7 +30,7 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
         self.pushButton_18.clicked.connect(self.result)                                           # =
         self.pushButton_19.clicked.connect(lambda: self.write_number(self.pushButton_19.text()))  # (
         self.pushButton_20.clicked.connect(lambda: self.write_number(self.pushButton_20.text()))  # )
-        #self.pushButton_20.clicked.connect(self.delete)                                           # delete удаление последнего символа
+        self.pushButton_21.clicked.connect(self.delete_last)                                      # DEL, удаление последнего символа
 
 
     def write_number(self, number):
@@ -45,12 +44,13 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
             #self.label.setText(self.label.text() + number)
             #self.flag = False                       # Переключение флага, значение принято если в окне уже есть что-то
         """
+        # Подключить математику и дописать функцию для кнопки DEL
         # Условие, которое убирает начальное знечение ноль на экране калькулятора, копия дабы не сломать сие творение
         if self.label.text() == '0' and self.flag:  # flag отвечает за отработку программы. True - отработала, посчитала или ошибка
             self.label.clear()
             self.flag = False  # Переключение флага, значение принято, здесь срабатывает если в окне начальный ноль
 
-        if self.label.text() == '0' and number == '.' and self.flag:
+        if self.label.text() == '0' and number == '.' and self.flag:  # Принятие выражения 0.
             self.enter = self.label.text()
             self.label.clear()
             self.flag = False
@@ -68,6 +68,13 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
         self.label.setText("0")
         self.flag = True                            # Сброс результата, на экране 0 программа отработала
 
+
+    def delete_last(self):
+        enter_str = self.label.text()
+        if len(enter_str) == 1:
+            self.label.setText('0')
+        else:
+            self.label.setText(enter_str[:-1])
 
     def result(self):
         operation = self.label.text()
