@@ -127,12 +127,13 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
     elif hooks_control(enter) > 0 and flag == False:
         flag_hooks = False
         out_messege = 'Лишняя ('
-
+    """
     # Поиск деления на ноль
+    # Может не понадобится?
     flag_div_by_zero = False         # Поумолчанию проверка пройдена
     if s_befor[-2:-1] == 0 and s_befor[:-1] == '/' and s_enter in '+-*':
         flag_div_by_zero = True
-
+    """
     # Обработка проверок
     # на выход передаётся флаг
     out_flag = False
@@ -142,11 +143,11 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
     # Ответ проверки
     if flag == False:
         print(enter, flag_last_symbol, 568)
-        return enter, True, out_flag   # Стока/символы приняты
-        # формат возврата: выходная строка, флаг отработки, флаг обработки целой строки на выходе
+        return enter, True, out_flag, out_messege   # Стока/символы приняты
+        # формат возврата: выходная строка, флаг отработки, флаг обработки целой строки на выходе, сообщение об ошибке
     else:
         print(s_befor, enter, out_messege, flag_last_symbol, 899)
-        return s_befor, False, out_flag  # Сторока/символы не приняты возвращает строку, которую получила на входе
+        return s_befor, False, out_flag, out_messege  # Сторока/символы не приняты возвращает строку, которую получила на входе
 
 
 # Функция элементарных мат. вычислений
@@ -225,7 +226,7 @@ def run_hooks(input_mass):
         result.extend(found_and_run(mass_in_hooks,priority_operators_1)) # Вычисления по операторам с приоритетом 1
         #print(result)
         if len(result) == len(mass_in_hooks):            # Если длины массивов равны, то вычислений не происходит
-            result.clear()                               # Очищаем result, передача массива для дольнейшей обработки
+            result.clear()                               # Очищаем result, передача массива для дальнейшей обработки
         else:
             mass_in_hooks.clear()
             mass_in_hooks.extend(result)
@@ -301,9 +302,9 @@ def matematika(operation):
         mass_after_run.clear()
     if len(mass_element) == 1:
         if mass_element[0] % 1 == 0:
-            return int(mass_element[0])
+            return int(mass_element[0]), error_messege
         else:
-            return round(mass_element[0], num_celi)
+            return round(mass_element[0], num_celi), error_messege
 
     mass_after_run.extend(found_and_run(mass_element, priority_operators_1))    # Поиск ВСЕХ операторов с приоритетом 1
     if mass_after_run[0] is None:             # Отлов ошибки по делению на ноль
@@ -315,9 +316,9 @@ def matematika(operation):
     mass_after_run.clear()                  # Очистка буферного списка
     if len(mass_element) == 1:              # Проверка на окончание работы
         if mass_element[0] % 1 == 0:        # Если там одно число, его и выводим
-            return int(mass_element[0])
+            return int(mass_element[0]), error_messege
         else:
-            return round(mass_element[0], num_celi)
+            return round(mass_element[0], num_celi), error_messege
 
     mass_after_run.extend(found_and_run(mass_element, priority_operators_3))  # Поиск ВСЕХ операторов с приоритетом 3
     if mass_after_run[0] is None:             # Отлов ошибки по делению на ноль
@@ -329,9 +330,9 @@ def matematika(operation):
     mass_after_run.clear()
     if len(mass_element) == 1:
         if mass_element[0] % 1 == 0:        # Если там одно число, его и выводим
-            return int(mass_element[0])
+            return int(mass_element[0]), error_messege
         else:
-            return round(mass_element[0],num_celi)
+            return round(mass_element[0],num_celi), error_messege
 
     mass_after_run.extend(found_and_run(mass_element, priority_operators_4))  # Поиск ВСЕХ операторов с приоритетом 4
     mass_element.clear()
@@ -339,7 +340,9 @@ def matematika(operation):
     mass_after_run.clear()
     if len(mass_element) == 1:
         if mass_element[0] % 1 == 0:        # Если там одно число, его и выводим
-            return int(mass_element[0])
+            return int(mass_element[0]), error_messege
         else:
-            return round(mass_element[0],num_celi)
+            return round(mass_element[0],num_celi), error_messege
+
+    # На выходе: кортеж  (значение, сообщение об ошибке)
 

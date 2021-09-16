@@ -8,7 +8,11 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
         #Это нужно для доступа к переменным в файле calc_design.py
         super().__init__()
         self.flag = True   # Значение флага в начале работы
-        self.enter = ''   # Переменная для хранения ввода
+        self.flag_out_enter_controll = True  # Запуск вычислений true - строка обработана, можно вычислять false - строка не корректна
+        self.flag_second = True             # Вторичный флаг enter_control строка выводится на экран, но не вычисляется
+        self.messege = ''                    # Переменная для вывода сообщения об ошибке
+        self.enter = ''     # Переменная для хранения ввода
+        self.enter_ap = []  # Переменная для передачи обработанной строки после enter_control
         self.setupUi(self)  # Инициализация дизайна
         self.pushButton_14.clicked.connect(lambda: self.write_number(self.pushButton_14.text()))  # 0
         self.pushButton.clicked.connect(lambda: self.write_number(self.pushButton.text()))        # 1
@@ -44,7 +48,7 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
             #self.label.setText(self.label.text() + number)
             #self.flag = False                       # Переключение флага, значение принято если в окне уже есть что-то
         """
-        # Подключить математику и дописать функцию для кнопки DEL
+        # Подключить математику
         # Условие, которое убирает начальное знечение ноль на экране калькулятора, копия дабы не сломать сие творение
         if self.label.text() == '0' and self.flag:  # flag отвечает за отработку программы. True - отработала, посчитала или ошибка
             self.label.clear()
@@ -57,15 +61,16 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
         else:
             #В целом работает
             self.enter = self.label.text()
-            enter_ap = enter_control(self.enter, number)   # enter after processing
-            print(enter_ap[0])
+            self.enter_ap = enter_control(self.enter, number)   # enter after processing
+            print(self.enter_ap[0])
             self.label.clear()
-            self.label.setText(enter_ap[0])
+            self.label.setText(self.enter_ap[0])
 
 
     def button_clear(self):
         self.label.clear()
-        self.label.setText("0")
+        self.label_2.clear()
+        self.label.setText('0')
         self.flag = True                            # Сброс результата, на экране 0 программа отработала
 
 
@@ -77,42 +82,23 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
             self.label.setText(enter_str[:-1])
 
     def result(self):
-        operation = self.label.text()
-        c = 0                                       # Из - за отсутствия этого начального значения пременной с был вылет по нажатию равно и пустом вводе
-        n = len(operation)
-        operators = ['*', '/', '+', '-', '%']
-        try:
-            try:
-                for element in operators:
-                    coper_index = operation.find(element, 0, n)
-                    if coper_index != -1:
-                        c = coper_index
-                        znak = element
-
-                a = float(operation[0:c])
-                b = float(operation[c + 1:n])
-                res = 0
-
-                if znak == '+':
-                    res = a + b
-                elif znak == '-':
-                    res = a - b
-                elif znak == '*':
-                    res = a * b
-                elif znak == '/':
-                    res = a / b
-                elif znak == '%':
-                    res = b / 100 * a
-                if res % 1 == 0:                     # преобразование 5,0 в 5 при выводе(целое число без ноля)
-                    res = int(res)
-                self.label.setText(str(res))
-                self.flag = True                     # программа отработала корректно, результат на экран, флаг меняется на True
-            except ValueError:
-                self.label.setText('Erorr')
-                self.flag = True                     # Исключение, программа отработала с ошибкой по вводу (не коректный ввод не смогла посчитать), флаг меняется на True
-        except ZeroDivisionError:
-            self.label.setText('Erorr div by zero')
-            self.flag = True                         # Исключение, программа отработала с ошибкой по делению на ноль, флаг меняется на True
+        result = []  # Массив для выходных данных, matematika выдаёт массив: (ответ, сообщение об ошибке)
+        self.flag_out_enter_controll = self.enter_ap[1]
+        self.flag_second = self.enter_ap[2]
+        operation = self.label.text()   # Получение строки из ввода
+        if self.flag_out_enter_controll and self.flag_second: # Если строка корректна и принята(проверки на скобки и окончание строки пройдены)
+            result.extend(matematika(operation))
+            self.label.clear()
+            self.label_2.clear()
+            self.label.setText(str(result[0]))     # Вывод результата
+            self.label_2.setText(str(result[1]))   # Вывод ошибки
+            self.flag = True                       # Смена флага программа отработала
+        else:   # Если сторока некорректна, на выходе входная строка, сообщение об ошибке если есть
+            self.label.clear()
+            self.label_2.clear()
+            self.label.setText(self.enter_ap[0])
+            self.label_2.setText(self.enter_ap[3])
+            self.flag = True                       # Смена флага программа отработала
 
 def main():
     app = QtWidgets.QApplication(sys.argv) # новый экземпляр класса Qtapplication
