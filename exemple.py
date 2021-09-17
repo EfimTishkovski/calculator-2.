@@ -25,93 +25,80 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
     # Первая проверка на входе только цифры и мат операторы, не пропустить левый символ!
     # Проверка всех символов строки s_enter
     for element in s_enter:
-        flag = True  # Начальное значение флага сработки условий
-        # print(element)
+        flag = True  # Начальное значение флага сработки условий может не нужно
         if element in acsess_element:
-            if element.isdigit() or element == '-':  # Если цифра, или минус (ввод первого отрицательного числа)
-                enter += element  # То добавить в ввод
-                flag = False  # Остановка обработки ввода, символ принят
-                print('accepted1')
-
+            if element.isdigit() or element == '-' and enter == '':  # Если цифра, или минус (ввод первого отрицательного числа)
+                enter += element                                     # То добавить в ввод
+                flag = False                                         # Остановка обработки ввода, символ принят
             else:
                 flag = True  # Символ не цифра, но допустимый, проверка продолжается
         else:
-            print('denial1', element)  # Символ левый! Дальше проверять нет смысла
-            flag = False
-            return s_befor  # Возвращаем строку котрую вводили
-        # print(enter)
+            flag = False     # Символ левый! Дальше проверять нет смысла может тоже не нужно
+            return s_befor   # Возвращаем строку котрую вводили
+
         # Вторая проверка
         if flag:
-            if element == '.':      # Корректный ввод дробных чисел, защита от 0.1.2.0
+            if element == '.':                          # Корректный ввод дробных чисел, защита от 0.1.2.0
                 if enter.rfind('.') != -1:
-                    index = enter.rfind('.')  # Поиск индекса предыдущей точки
+                    index = enter.rfind('.')            # Поиск индекса предыдущей точки
                     s_betwin_points = enter[index + 1:]
                     if s_betwin_points[-1:].isdigit():  # Продолжение проверки если предыдущая точка найдена
                         for symbol in s_betwin_points:
                             if symbol in '+-/*%^':
                                 enter += element        # Проверка прошла успешно, добавляем точку
-                                print('accepted .')
                             else:
                                 flag = False            # Проверка не пройдена
-                                print('denial .')
                     else:
                         flag = False            # если последний символ меджу точками не число, то проверка не пройдена
-                        print('denial +.')
                 else:
                     flag = False
                     enter += element         # Если предыдущей точки не найдено
-                    print('accepted add first .')
 
             if enter[-2:-1] == '/' and enter[-1:] == '0' and element in '+-*/':  # Обработка введения деления на ноль
-                print('denail div by zero')                                      # Если условие верно, то элемент не принимается
-                flag = False
+                flag = False                                                     # Если условие верно, то элемент не принимается
 
 
 
             if enter[-1:].isdigit() and element in '(+-/*^%' and flag:  # Если последний элемент уже принятой строки - цифра а за ней мат оператор,
                 enter += element  # Тогда добавляем символ
                 flag = False  # Остановка обработки ввода, символ принят
-                print('accepted2')
-            else:
-                print('denial2')
+            #else:
+                #print('denial2')
 
             if enter[-1:] in '+-/*^%.' and element.isdigit() and flag:  # Если последний элемент уже принятой строки - мат. оператор,
                 # + принятие дробно гочисла 0.0
                 enter += element  # Защита от двойтого ввода типа // ** ++
                 flag = False
-                print('accepted3')
 
             elif enter[-1:] == ')' and element in '+-/*^%' and flag:  # Оператор после скобки
                 enter += element
-                print('accepted4')
                 flag = False
 
             elif enter[-1:] == '(' and element == '-' and flag:  # Если первое число в скобке - отрицательное
                 enter += element
-                print('accepted5')
                 flag = False
-
-            else:
-                print('denial3')
+            #else:
+                #print('denial3')
 
             # Проверки при вводе скобок
             if element == '(' and enter[-1:] in '+-/*^%' and flag:  # Ввод скобок  +(  -(  *(  /(  ^(  %(
                 enter += element
-                print('accepted6')
                 flag = False
+
+            #elif element == ')' and enter[-1:] in '+-/*^%' and flag:  # Ввод скобок  )+  )-  )*  )/  )^  )%
+                #enter += element
+                #print('accepted66')
+                #flag = False
+
             elif element == '(' and enter[-1:] == '(' and flag:  # ((
                 enter += element
-                print('accepted7')
                 flag = False
             elif element == ')' and enter[-1:] == ')' and flag:  # ))
                 enter += element
-                print('accepted71')
                 flag = False
             elif element == ')' and enter[-1:].isdigit() and flag:  # число)
                 enter += element
-                print('accepted8')
                 flag = False
-
 
     # Проверка строки на выходе
     out_messege = ''  # сообщение об ошибке по умолчанию сообщение пустое
@@ -121,7 +108,6 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
         if enter[-1:] in '+-/*^%':    # Если выражение заканчается одним из: +-/*^%,
             flag_last_symbol = False  # то оно показывается в окне, но не обрабатывается дальше
             out_messege = 'Не верное выражение ' + enter[-1:]
-            print('denial out')
 
     if flag == False:
         # Проверка на число( пример: 2(
@@ -151,8 +137,7 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
         out_messege = 'Лишняя ('
 
     # Поиск явного деления на ноль
-    # Может не понадобится?
-    flag_div_by_zero = True        # Поумолчанию проверка пройдена
+    flag_div_by_zero = True        # По умолчанию проверка пройдена
     if enter[-1:] == '0' and enter[-2:-1] == '/':
         flag_div_by_zero = False
         out_messege = 'Деление на ноль'
@@ -165,13 +150,10 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
 
     # Ответ проверки
     if flag == False:
-        print(enter, flag_last_symbol, out_flag, 568)
         return enter, True, out_flag, out_messege   # Стока/символы приняты
         # формат возврата: выходная строка, флаг отработки, флаг обработки целой строки на выходе, сообщение об ошибке
     else:
-        print(s_befor, enter, out_messege, flag_last_symbol, 899)
         return s_befor, False, out_flag, out_messege  # Сторока/символы не приняты возвращает строку, которую получила на входе
-
 
 # Функция элементарных мат. вычислений
 def elementary_operations(a,b,operator):
@@ -204,12 +186,10 @@ def found_and_run(input_mass, operator):
     while flag:
         # Поиск
         for i in range(1, len(mass)):
-            #print(mass[i], i)
-            if mass[i] in operator:                                               # Если совпало, высичисляем
-                #print(mass[i])
+            if mass[i] in operator:                                                 # Если совпало, высичисляем
                 mass[i] = elementary_operations(mass[i - 1], mass[i + 1], mass[i])  # Меняем оператор на результат
-                del mass[i + 1]                                                   # Удаляем исходные цифры из массива
-                del mass[i - 1]                                                   # Удаляем исходные цифры из массива
+                del mass[i + 1]                                                     # Удаляем исходные цифры из массива
+                del mass[i - 1]                                                     # Удаляем исходные цифры из массива
                 break
         else:
             flag = False           # Остановка цикла после отработки for
@@ -239,15 +219,13 @@ def run_hooks(input_mass):
                         a = j
         if a < 0:                               # Если не найдено открытой скобки
             return mass                         # Возврат массива он же ответ функции, если скобок не было, то вернётся исходный
-        #print(a, b)
         for k in range(a + 1, b):
             mass_in_hooks.append(mass[k])
-        #print(mass_in_hooks)
+
         # Поиск окночен в mass_in_hooks выражение в скобках
         # Вычисления, всегда 2 числа (x  y)
         result = []
         result.extend(found_and_run(mass_in_hooks,priority_operators_1)) # Вычисления по операторам с приоритетом 1
-        #print(result)
         if len(result) == len(mass_in_hooks):            # Если длины массивов равны, то вычислений не происходит
             result.clear()                               # Очищаем result, передача массива для дальнейшей обработки
         else:
@@ -257,7 +235,6 @@ def run_hooks(input_mass):
         result.extend(found_and_run(mass_in_hooks, priority_operators_3))   # Вычисления по операторам с приоритетом 3
         if result[0] is None:
             return
-        #print(result)
         if len(result) == len(mass_in_hooks):
             result.clear()
         else:
@@ -266,7 +243,6 @@ def run_hooks(input_mass):
             result.clear()
 
         result.extend(found_and_run(mass_in_hooks, priority_operators_4))  # Вычисления по операторам с приоритетом 4
-        #print(result)
         if len(result) == len(mass_in_hooks):
             result.clear()
         else:
@@ -275,7 +251,6 @@ def run_hooks(input_mass):
             result.clear()
 
         mass[a] = mass_in_hooks[0]          # Замена первой скобки на результат
-        #print(mass_in_hooks)
         for i in range(b, a, -1):
             del mass[i]                     # Удаление из массива выражения в скобках
         a = -1      # Сброс переменных
@@ -295,9 +270,9 @@ def matematika(operation):
     for i in range(len(operation)):
         if operation[i].isdigit() or operation[i] == '.':   # Если элемент число целое или типа float
             number += operation[i]                          # Пока попадаются не символы-цифры они формируются в число
-        elif operation[i] == '-' and number == '':          # Принятие отрицательного числа и оно стоит первым
+        elif operation[i] == '-' and number == '' and len(mass_element) < 1:          # Принятие отрицательного числа и оно стоит первым  and len(mass_element) < 1
             number += operation[i]
-        elif operation[i] == '-' and operation[i - 1] == '(' and number != '':  # Принятие отрицательного числа и оно стоит где-то там
+        elif operation[i] == '-' and operation[i - 1] == '(' and len(mass_element) > 1:  # Принятие отрицательного числа и оно стоит где-то там and number !=
             number += operation[i]
         elif operation[i] in operators and number != '':    # Если элемент - оператор и за оператором идёт число
             mass_element.append(float(number))              # Добавление числа (тип float) в массив
@@ -312,7 +287,6 @@ def matematika(operation):
         elif number in operators and number != '':  # Если оператор, то соответствие с масс операторов и не пустой
             mass_element.append(number)
     # После цикла имеем массив отдельных элементов
-    print(mass_element)
     # Основной блок вычислений
     # mass_element   массив до вычислений
     # mass_after_run массив после вычислений
@@ -372,4 +346,3 @@ def matematika(operation):
             return round(mass_element[0],num_celi), error_messege
 
     # На выходе: кортеж  (значение, сообщение об ошибке)
-

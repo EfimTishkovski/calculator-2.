@@ -53,7 +53,7 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
             #В целом работает
             self.enter = self.label.text()
             self.enter_ap = enter_control(self.enter, number)   # enter after processing
-            print(self.enter_ap[0])
+            #print(self.enter_ap[0])
             self.label.clear()
             self.label.setText(self.enter_ap[0])
 
@@ -73,6 +73,11 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
             self.label.setText(enter_str[:-1])
 
     def result(self):
+        if self.label.text() == '0':
+            #self.label.setText('0')
+            self.enter = '0'
+            return                     # Костыль, без него вылетало при нажатии на = при начале работы
+
         result = []  # Массив для выходных данных, matematika выдаёт массив: (ответ, сообщение об ошибке)
         self.flag_out_enter_controll = self.enter_ap[1]
         self.flag_second = self.enter_ap[2]
