@@ -101,6 +101,10 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
                 enter += element
                 print('accepted7')
                 flag = False
+            elif element == ')' and enter[-1:] == ')' and flag:  # ))
+                enter += element
+                print('accepted71')
+                flag = False
             elif element == ')' and enter[-1:].isdigit() and flag:  # число)
                 enter += element
                 print('accepted8')
