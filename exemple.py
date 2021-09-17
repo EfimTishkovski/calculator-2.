@@ -28,7 +28,7 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
         flag = True  # Начальное значение флага сработки условий
         # print(element)
         if element in acsess_element:
-            if element.isdigit():  # Если цифра,
+            if element.isdigit() or element == '-':  # Если цифра, или минус (ввод первого отрицательного числа)
                 enter += element  # То добавить в ввод
                 flag = False  # Остановка обработки ввода, символ принят
                 print('accepted1')
@@ -65,6 +65,8 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
             if enter[-2:-1] == '/' and enter[-1:] == '0' and element in '+-*/':  # Обработка введения деления на ноль
                 print('denail div by zero')                                      # Если условие верно, то элемент не принимается
                 flag = False
+
+
 
             if enter[-1:].isdigit() and element in '(+-/*^%' and flag:  # Если последний элемент уже принятой строки - цифра а за ней мат оператор,
                 enter += element  # Тогда добавляем символ
@@ -112,17 +114,33 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
 
 
     # Проверка строки на выходе
+    out_messege = ''  # сообщение об ошибке по умолчанию сообщение пустое
     # как вариант: передавть значение flag_out сразу в return минуя проверки
     flag_last_symbol = True
     if flag == False:
         if enter[-1:] in '+-/*^%':    # Если выражение заканчается одним из: +-/*^%,
             flag_last_symbol = False  # то оно показывается в окне, но не обрабатывается дальше
+            out_messege = 'Не верное выражение ' + enter[-1:]
             print('denial out')
+
+    if flag == False:
+        # Проверка на число( пример: 2(
+        for i in range(1, len(enter)):
+            if enter[i] == '(' and enter[i - 1].isdigit():
+                flag_last_symbol = False
+                out_messege = 'Не верное выражение ' +  enter[i - 1] + enter[i]
+                break
+
+        # Проверка на число) пример: )2
+        for i in range(1, len(enter) - 1):
+            if enter[i] == ')' and enter[i + 1].isdigit():
+                flag_last_symbol = False
+                out_messege = 'Не верное выражение ' + enter[i] + enter[i + 1]
+                break
 
 
     # Проверка корректности введения скобок
     flag_hooks = True  # Флаг для ответа проверки на скобки по умолчанию проверка пройдена
-    out_messege = ''  # по умолчанию сообщение пустое
     if hooks_control(enter) == 0 and flag == False:
         flag_hooks = True
     elif hooks_control(enter) < 0 and flag == False:
@@ -131,22 +149,23 @@ def enter_control(s_befor, s_enter):        # s_befor - стока до ввод
     elif hooks_control(enter) > 0 and flag == False:
         flag_hooks = False
         out_messege = 'Лишняя ('
-    """
-    # Поиск деления на ноль
+
+    # Поиск явного деления на ноль
     # Может не понадобится?
-    flag_div_by_zero = False         # Поумолчанию проверка пройдена
-    if s_befor[-2:-1] == 0 and s_befor[:-1] == '/' and s_enter in '+-*':
-        flag_div_by_zero = True
-    """
+    flag_div_by_zero = True        # Поумолчанию проверка пройдена
+    if enter[-1:] == '0' and enter[-2:-1] == '/':
+        flag_div_by_zero = False
+        out_messege = 'Деление на ноль'
+
     # Обработка проверок
     # на выход передаётся флаг
     out_flag = False
-    if flag_hooks and flag_last_symbol:
+    if flag_hooks and flag_last_symbol and flag_div_by_zero:
         out_flag = True
 
     # Ответ проверки
     if flag == False:
-        print(enter, flag_last_symbol, 568)
+        print(enter, flag_last_symbol, out_flag, 568)
         return enter, True, out_flag, out_messege   # Стока/символы приняты
         # формат возврата: выходная строка, флаг отработки, флаг обработки целой строки на выходе, сообщение об ошибке
     else:
@@ -276,6 +295,10 @@ def matematika(operation):
     for i in range(len(operation)):
         if operation[i].isdigit() or operation[i] == '.':   # Если элемент число целое или типа float
             number += operation[i]                          # Пока попадаются не символы-цифры они формируются в число
+        elif operation[i] == '-' and number == '':          # Принятие отрицательного числа и оно стоит первым
+            number += operation[i]
+        elif operation[i] == '-' and operation[i - 1] == '(' and number != '':  # Принятие отрицательного числа и оно стоит где-то там
+            number += operation[i]
         elif operation[i] in operators and number != '':    # Если элемент - оператор и за оператором идёт число
             mass_element.append(float(number))              # Добавление числа (тип float) в массив
             mass_element.append(operation[i])               # Добавление символа в массив
@@ -289,7 +312,7 @@ def matematika(operation):
         elif number in operators and number != '':  # Если оператор, то соответствие с масс операторов и не пустой
             mass_element.append(number)
     # После цикла имеем массив отдельных элементов
-    #print(mass_element)
+    print(mass_element)
     # Основной блок вычислений
     # mass_element   массив до вычислений
     # mass_after_run массив после вычислений
