@@ -346,3 +346,4 @@ def matematika(operation):
             return round(mass_element[0],num_celi), error_messege
 
     # На выходе: кортеж  (значение, сообщение об ошибке)
+# комментарий =)

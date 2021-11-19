@@ -5,8 +5,7 @@ from exemple import *         # Подключение файла с тонна�
 
 class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableWidget):
     def __init__(self):
-        #Это нужно для доступа к переменным в файле calc_design.py
-        super().__init__()
+        super().__init__()                   # Это нужно для доступа к переменным в файле calc_des.py
         self.flag = True                     # Значение флага в начале работы
         self.flag_out_enter_controll = True  # Запуск вычислений true - строка обработана, можно вычислять false - строка не корректна
         self.flag_second = True              # Вторичный флаг enter_control строка выводится на экран, но не вычисляется
@@ -74,9 +73,9 @@ class Main_run (QtWidgets.QMainWindow, calc_des.Ui_MainWindow, QtWidgets.QTableW
 
     def result(self):
         if self.label.text() == '0':
-            #self.label.setText('0')
             self.enter = '0'
             return                     # Костыль, без него вылетало при нажатии на = при начале работы
+                                       # Если на входе 0 функция возвращает None
 
         result = []  # Массив для выходных данных, matematika выдаёт массив: (ответ, сообщение об ошибке)
         self.flag_out_enter_controll = self.enter_ap[1]
